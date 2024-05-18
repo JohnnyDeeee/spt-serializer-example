@@ -2,7 +2,6 @@ import { DependencyContainer, inject, injectable } from "tsyringe";
 import { IPreAkiLoadMod } from "@spt-aki/models/external/IPreAkiLoadMod";
 import { ILogger } from "@spt-aki/models/spt/utils/ILogger";
 import { name, author } from "../package.json";
-import { Config } from "./Config";
 import path from "path";
 import fs from "fs";
 import type { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
@@ -14,21 +13,12 @@ export default class Mod implements IPreAkiLoadMod
 {
     public static container: DependencyContainer;
     public static logPrefix: string = `[${author}-${name}]`;
-    public static config: Config;
     public static logger: ILogger;
 
     // Code added here will load BEFORE the server has started loading
     preAkiLoad(container: DependencyContainer): void 
     {
         Mod.logger = container.resolve<ILogger>("WinstonLogger");
-        Mod.config = new Config();
-
-        if (!Mod.config.enabled)
-        {
-            Mod.logger.info(`${Mod.logPrefix} Config setting 'enabled' is 'false', so will not do anything`);
-            return;
-        }
-
         Mod.container = container;
 
         // Register our own serializer
